@@ -1,2 +1,9 @@
 ---
 # tasks file for aws-sg-whitelist-my-ip
+
+- name: Set EC2 groups
+  ec2_group:
+    name: "{{item.name}}"
+    description: ""
+    rules: "{{item.rules}}"
+  with_items: "{{security_groups}}"
