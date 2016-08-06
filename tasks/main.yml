@@ -2,7 +2,7 @@
 # tasks file for aws-sg-whitelist-my-ip
 
 - include: unset_access.yml
-  when: access == 'unset'
+  when: access == 'unset' or access == 'reset'
 
 - include: set_access.yml
-  when: access == 'set'
+  when: access == 'set' or access == 'reset'
