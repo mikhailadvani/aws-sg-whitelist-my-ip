@@ -1,8 +1,8 @@
 ---
 # tasks file for aws-sg-whitelist-my-ip
 
-- include: revoke_access.yml
-  when: task == 'revoke_access'
+- include: unset_access.yml
+  when: access == 'unset'
 
-- include: allow_access.yml
-  when: task == 'allow_access'
+- include: set_access.yml
+  when: access == 'set'

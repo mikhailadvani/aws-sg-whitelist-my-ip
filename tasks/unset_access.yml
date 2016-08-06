@@ -12,7 +12,8 @@
 - set_fact:
     backed_up_security_groups: "{{backed_up_sg_file_output.results|map(attribute='stdout')|list}}"
 
-- include: reset_security_groups.yml
+- name: Set security group rules to original values
+  include: set_security_groups_to_original_rules.yml
   with_items: "{{backed_up_security_groups}}"
 
 - name: Delete previously backed up security_group files
