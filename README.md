@@ -21,6 +21,7 @@ Role Variables
     - vpc_id: The id of the VPC of the security group
     - rules: The additional inbound rules to be added from the controller IP. cidr_ip needs to be "{{my_ip}}" which will be resolved dynamically as a pre-task
 - access: set/unset/reset. Whether your external IP needs to be added, removed or updated to the security groups mentioned in vars **Mandatory**: *yes*. **Default**: *none*
+- my_ip: Optional extra var to whitelist specified IP instead of querying external API myexternalip.com. **Default**: Auto-computed to the external IP of the controller machine 
 
 
 Example Playbook
@@ -36,6 +37,7 @@ Example Playbook
       connection: local
       pre_tasks:
         - include: "{{path_to_role}}/tasks/get_my_ip.yml"
+          when: my_ip is not defined and (access == 'set' or access == 'reset')
       environment:
         AWS_ACCESS_KEY_ID: "{{AWS_ACCESS_KEY_ID}}"
         AWS_SECRET_ACCESS_KEY: "{{AWS_SECRET_ACCESS_KEY}}"
