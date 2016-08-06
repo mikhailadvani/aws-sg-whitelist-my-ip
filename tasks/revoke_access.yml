@@ -1,0 +1,20 @@
+- name: Get previous security_group files
+  find: paths="{{roles_directory}}/aws-sg-whitelist-my-ip/files"  patterns="sg_*.json"
+  register: find_output
+
+- set_fact:
+    backed_up_sg_file_paths: "{{find_output.files|map(attribute='path')|list}}"
+
+- command: "cat {{item}}"
+  with_items: "{{backed_up_sg_file_paths}}"
+  register: backed_up_sg_file_output
+
+- set_fact:
+    backed_up_security_groups: "{{backed_up_sg_file_output.results|map(attribute='stdout')|list}}"
+
+- include: reset_security_groups.yml
+  with_items: "{{backed_up_security_groups}}"
+
+- name: Delete previously backed up security_group files
+  file: path="{{item}}" state=absent
+  with_items: "{{backed_up_sg_file_paths}}"
