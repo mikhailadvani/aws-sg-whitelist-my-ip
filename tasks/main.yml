@@ -1,9 +1,22 @@
 ---
 # tasks file for aws-sg-whitelist-my-ip
 
+- name: Get existing security group rules
+  command: "python {{roles_directory}}/aws-sg-whitelist-my-ip/files/get_existing_sg_rules_to_backup.py {{item.name}} {{item.vpc_id}}"
+  with_items: "{{security_groups}}"
+  register: security_groups_info
+
+- set_fact:
+    existing_security_groups: "{{security_groups_info.results|map(attribute='stdout_lines')|list}}"
+
+- name: Backup existing security group rules
+  copy: content="{{item.1}}" dest="{{roles_directory}}/aws-sg-whitelist-my-ip/files/sg_{{item.0}}.json"
+  with_indexed_items: "{{existing_security_groups}}"
+
 - name: Set EC2 groups
   ec2_group:
     name: "{{item.name}}"
     description: ""
     rules: "{{item.rules}}"
+    purge_rules: false
   with_items: "{{security_groups}}"
