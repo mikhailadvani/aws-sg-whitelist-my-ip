@@ -24,3 +24,5 @@ security_groups:
       from_port: 0
       to_port: 65535
       cidr_ip: "{{my_ip}}"
+    - proto: all
+      cidr_ip: "{{my_ip}}"
