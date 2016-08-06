@@ -1,7 +1,7 @@
 aws-sg-whitelist-my-ip
 =========
 
-Role to add, remove update your external IP to selected security groups for protocols and port ranges specified
+Role to whitelist the external IP of the machine the code is running on a.k.a. Ansible controller or a custom IP specified as an extra var with support of resetting to the original state or re-compute a changed external IP
 
 Requirements
 ------------
