@@ -7,6 +7,12 @@ vpc_id = sys.argv[2]
 
 ec2_connection = EC2Connection()
 
+def get_group_name_from_id(group_id, vpc_id):
+    account_number_removed_group_id = '-'.join(group_id.split('-')[:2])
+    security_groups = ec2_connection.get_all_security_groups(group_ids=[account_number_removed_group_id], filters={'vpc_id': vpc_id})
+    return security_groups[0].name
+
+
 def jsonify_security_group_rules(rules):
     jsonified_rules = []
     for rule in rules:
@@ -17,7 +23,7 @@ def jsonify_security_group_rules(rules):
         for grant in rule.grants:
             sg_rule = jsonified_rule
             if 'sg' in str(grant):
-                sg_rule['group_name'] = str(grant)
+                sg_rule['group_name'] = get_group_name_from_id(str(grant), vpc_id)
             else:
                 sg_rule['cidr_ip'] = str(grant)
             jsonified_rules.append(sg_rule)
@@ -27,13 +33,10 @@ def get_security_group_facts():
     security_group = ec2_connection.get_all_security_groups(filters={'group-name': [group_name], 'vpc_id': vpc_id})
 
     security_group_details = dict()
-    security_group_details["id"] = security_group[0].id
-    security_group_details["tag"] = security_group[0].tags
-    security_group_details["name"] = security_group[0].name
+    security_group_details["name"] = group_name
     security_group_details["description"] = security_group[0].description
-    security_group_details["vpc_id"] = security_group[0].vpc_id
+    security_group_details["vpc_id"] = vpc_id
     security_group_details["rules"] = jsonify_security_group_rules(security_group[0].rules)
-    security_group_details["rules_egress"] = jsonify_security_group_rules(security_group[0].rules_egress)
 
     return json.dumps(security_group_details)
 
