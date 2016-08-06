@@ -1,3 +1,11 @@
+- name: Get previous security_group files
+  find: paths="{{roles_directory}}/aws-sg-whitelist-my-ip/files"  patterns="sg_*.json"
+  register: find_output
+
+- name: Fail if groups are already there. To prevent update of backed up security groups
+  fail: msg="Files matching sg_*.json exist in the files directory"
+  when: find_output.matched != 0
+
 - name: Get existing security group rules
   command: "python {{roles_directory}}/aws-sg-whitelist-my-ip/files/get_existing_sg_rules_to_backup.py {{item.name}} {{item.vpc_id}}"
   with_items: "{{security_groups}}"
