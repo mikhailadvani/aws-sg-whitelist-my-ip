@@ -1,3 +1,3 @@
 ---
 # defaults file for aws-sg-whitelist-my-ip
-roles_directory: roles
+path_to_role: roles/aws-sg-whitelist-my-ip

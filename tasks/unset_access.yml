@@ -1,5 +1,5 @@
 - name: Get previous security_group files
-  find: paths="{{roles_directory}}/aws-sg-whitelist-my-ip/files"  patterns="sg_*.json"
+  find: paths="{{path_to_role}}/files"  patterns="sg_*.json"
   register: find_output
 
 - set_fact:

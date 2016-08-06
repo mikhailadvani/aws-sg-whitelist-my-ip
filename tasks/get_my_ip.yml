@@ -1,9 +1,9 @@
 
 - name: Get external IP from ipinfo.io
-  get_url: url=https://ipinfo.io/ip dest={{roles_directory}}/aws-sg-whitelist-my-ip/files/local_ip force=yes
+  get_url: url=https://ipinfo.io/ip dest={{path_to_role}}/files/local_ip force=yes
 
 - name: Read external ip from file
-  command: "cat {{roles_directory}}/aws-sg-whitelist-my-ip/files/local_ip"
+  command: "cat {{path_to_role}}/files/local_ip"
   register: local_ip
 
 - name: Set the my_ip variable
