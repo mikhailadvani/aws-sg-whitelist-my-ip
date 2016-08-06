@@ -1,38 +1,56 @@
-Role Name
+aws-sg-whitelist-my-ip
 =========
 
-A brief description of the role goes here.
+Role to add, remove update your external IP to selected security groups for protocols and port ranges specified
 
 Requirements
 ------------
-
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Python 2.7
+- boto
+- AWS access keys with EC2FullAccess privileges
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+- AWS_ACCESS_KEY_ID: Access key with EC2FullAccess privileges being set as environment variable as shown in the sample below
+- AWS_SECRET_ACCESS_KEY: Corresponding secret access key to AWS_ACCESS_KEY_ID
+- EC2_REGION: The AWS region of your infrastructure
+- path_to_role: Path to the directory of the role. **Default**: *roles/mikhailadvani.aws-sg-whitelist-my-ip*
+- security_groups: The security group rules that should be modified to allow the IP of the controller machine. Supports multiple security groups
+    - name: Name of the security group to be updated
+    - vpc_id: The id of the VPC of the security group
+    - rules: The additional inbound rules to be added from the controller IP. cidr_ip needs to be "{{my_ip}}" which will be resolved dynamically as a pre-task
+- access: set/unset/reset. Whether your external IP needs to be added, removed or updated to the security groups mentioned in vars **Mandatory**: *yes*. **Default**: *none*
 
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+`ansible-playbook aws-sg-whitelist-my-ip.yml -v -e "access=set"`
 
-    - hosts: servers
+`ansible-playbook aws-sg-whitelist-my-ip.yml -v -e "access=reset"`
+
+`ansible-playbook aws-sg-whitelist-my-ip.yml -v -e "access=unset"`
+
+    - hosts: localhost
+      connection: local
+      pre_tasks:
+        - include: "{{path_to_role}}/tasks/get_my_ip.yml"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{AWS_ACCESS_KEY_ID}}"
+        AWS_SECRET_ACCESS_KEY: "{{AWS_SECRET_ACCESS_KEY}}"
+        EC2_REGION: "{{EC2_REGION}}"
       roles:
-         - { role: username.rolename, x: 42 }
+        - {role: aws-sg-whitelist-my-ip}
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+The role was created in 2016 by [Mikhail Advani](https://github.com/mikhailadvani "Github")
+
+Twitter Handle: [@mikhail_advani](https://twitter.com/mikhail_advani "Twitter")
